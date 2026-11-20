@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arabic Letter Pals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800&family=Fredoka:wght@400;500;600;700&family=Lalezar&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Sticker-book world: every letter is a pal with its own hue (--h), thick ink outlines and hard shadows.
+     Layout: sticky pal on the left, four short cards on the right; one column on a phone. */
+  --ink: #1f1a3d;
+  --paper: #f7f4ff;
+  --sun: #ffd23f;
+  --pop: #ff5d73;
+  --mint: #27c4a8;
+  --h: 262;
+  --font-display: 'Fredoka', 'Trebuchet MS', system-ui, sans-serif;
+  --font-ar: 'Lalezar', 'Cairo', 'Tahoma', 'DejaVu Sans', sans-serif;
+  --font-word: 'Cairo', 'Tahoma', 'DejaVu Sans', sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body {
+  font-family: var(--font-display);
+  font-size: 18px;
+  line-height: 1.45;
+  color: var(--ink);
+  background-color: hsl(var(--h) 100% 96%);
+  transition: background-color .5s;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+h1, h2, h3, p { margin: 0; }
+h1, h2 { text-wrap: balance; }
+a { color: inherit; }
+[lang="ar"] { font-family: var(--font-ar); direction: rtl; unicode-bidi: isolate; }
+
+/* ---------- top bar ---------- */
+.bar { display: flex; align-items: center; gap: 12px; max-width: 1040px; margin: 0 auto; padding: 14px 16px 6px; }
+.brand { flex: 1; font-weight: 700; font-size: 1.2rem; text-decoration: none; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: #fff; border: 3px solid var(--ink); border-radius: 999px; font-weight: 700; }
+.pill svg { width: 22px; height: 22px; }
+
+.btn {
+  font: inherit; font-weight: 600; color: var(--ink); text-decoration: none;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 18px; background: #fff; border: 3px solid var(--ink); border-radius: 16px;
+  box-shadow: 0 4px 0 var(--ink); cursor: pointer; transition: transform .08s, box-shadow .08s;
+}
+.btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+.btn.big { font-size: 1.15rem; padding: 14px 24px; background: var(--sun); }
+.btn.mint { background: var(--mint); }
+.btn.icon { width: 48px; height: 48px; padding: 0; }
+.btn.icon svg { width: 26px; height: 26px; }
+.btn[hidden] { display: none; }
+a:focus-visible, button:focus-visible { outline: 4px solid var(--ink); outline-offset: 3px; }
+
+main { max-width: 1040px; margin: 0 auto; padding: 10px 16px 40px; }
+
+/* ---------- pals (letter creatures) ---------- */
+.pal { position: relative; isolation: isolate; display: inline-block; }
+.pal-in { position: relative; }
+.eyes { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 2; pointer-events: none; }
+.eye { width: 30px; height: 34px; background: #fff; border: 3px solid var(--ink); border-radius: 50%; display: grid; place-items: center; overflow: hidden; animation: blink 5.5s infinite; }
+.eye:nth-child(2) { animation-delay: .06s; }
+.eye b { display: block; width: 12px; height: 12px; background: var(--ink); border-radius: 50%; transition: transform .06s; }
+.eyes.sm { top: -12px; gap: 3px; }
+.eyes.sm .eye { width: 20px; height: 23px; border-width: 2px; }
+.eyes.sm .eye b { width: 8px; height: 8px; }
+.eyes.xl { top: -30px; gap: 10px; }
+.eyes.xl .eye { width: 50px; height: 56px; border-width: 4px; }
+.eyes.xl .eye b { width: 20px; height: 20px; }
+@keyframes blink { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+
+.body {
+  position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: 1 / 1;
+  background: hsl(var(--h) 90% 68%); border: 5px solid var(--ink);
+  border-radius: 46% 46% 38% 38% / 52% 52% 40% 40%; box-shadow: 0 8px 0 var(--ink);
+  font-family: var(--font-ar); color: #fff; padding: 0; cursor: pointer;
+}
+.body::before, .body::after { content: ""; position: absolute; bottom: -22px; width: 26%; height: 24px; background: var(--ink); border-radius: 50% 50% 10px 10px; z-index: -1; }
+.body::before { left: 18%; }
+.body::after { right: 18%; }
+.glyph { display: block; line-height: 1.5; padding-bottom: .08em; -webkit-text-stroke: .1em var(--ink); paint-order: stroke fill; text-shadow: 0 .04em 0 var(--ink); }
+.pal.squish .pal-in { animation: squish .6s; }
+@keyframes squish {
+  0% { transform: scale(1, 1); }
+  25% { transform: scale(1.16, .82); }
+  55% { transform: scale(.9, 1.12) translateY(-14px); }
+  80% { transform: scale(1.04, .97); }
+  100% { transform: scale(1, 1); }
+}
+.bubble {
+  position: absolute; right: -6px; top: -58px; width: max-content; max-width: 210px; padding: 6px 14px; z-index: 5;
+  background: #fff; border: 3px solid var(--ink); border-radius: 16px; font-weight: 700; font-size: .95rem; line-height: 1.25; text-align: center;
+  opacity: 0; transform: scale(.6) rotate(-4deg); transition: opacity .18s, transform .18s; pointer-events: none;
+}
+.bubble.show { opacity: 1; transform: scale(1) rotate(3deg); }
+.stage-pal .bubble { top: -96px; left: 50%; right: auto; transform: translateX(-50%) scale(.6) rotate(-4deg); }
+.stage-pal .bubble.show { transform: translateX(-50%) scale(1) rotate(3deg); }
+
+/* ---------- home ---------- */
+.hero { display: grid; gap: 28px; align-items: center; padding: 18px 0 8px; }
+.hero h1 { font-size: clamp(2rem, 6vw, 3.1rem); line-height: 1.05; font-weight: 700; }
+.hero p { margin-top: 12px; max-width: 34em; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 20px; }
+.dir-note { display: inline-flex; align-items: center; gap: 10px; margin-top: 18px; padding: 8px 14px; background: #fff; border: 3px dashed var(--ink); border-radius: 14px; font-weight: 500; }
+.dir-note svg { width: 28px; height: 18px; flex: none; }
+.hero-pals { display: flex; justify-content: center; align-items: flex-end; gap: 22px; padding-top: 70px; }
+.hero-pals .pal { width: 128px; }
+.hero-pals .pal:nth-child(1) { transform: rotate(-6deg); }
+.hero-pals .pal:nth-child(2) { width: 160px; transform: translateY(-14px) rotate(3deg); }
+.hero-pals .pal:nth-child(3) { transform: rotate(-3deg); }
+.hero-pals .body { font-size: 90px; }
+.hero-pals .pal:nth-child(2) .body { font-size: 110px; }
+@media (min-width: 820px) { .hero { grid-template-columns: 1.15fr 1fr; } }
+@media (max-width: 420px) { .hero-pals { gap: 12px; } .hero-pals .pal { width: 96px; } .hero-pals .pal:nth-child(2) { width: 118px; } .hero-pals .body { font-size: 66px; } .hero-pals .pal:nth-child(2) .body { font-size: 82px; } }
+
+.section-title { margin: 30px 0 4px; font-size: 1.5rem; }
+.sub { font-size: .95rem; opacity: .8; }
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 34px 12px; padding: 30px 2px 10px; direction: rtl; }
+@media (min-width: 620px) { .grid { grid-template-columns: repeat(7, 1fr); gap: 36px 14px; } }
+.tile {
+  position: relative; direction: ltr; display: grid; justify-items: center; align-content: center; gap: 0; min-height: 112px; padding: 8px 4px 6px;
+  background: hsl(var(--h) 90% 70%); border: 3px solid var(--ink); border-radius: 22px 22px 18px 18px; box-shadow: 0 5px 0 var(--ink);
+  text-decoration: none; transition: transform .12s;
+}
+.tile:hover { transform: translateY(-4px) rotate(-1.5deg); }
+.tile .glyph { font-family: var(--font-ar); font-size: clamp(2.7rem, 9vw, 3.6rem); line-height: 1.35; color: #fff; direction: rtl; }
+.tile .tn { padding: 1px 10px; background: #fff; border: 2px solid var(--ink); border-radius: 999px; font-weight: 600; font-size: .85rem; line-height: 1.3; white-space: nowrap; }
+.tile .tstar { position: absolute; top: -12px; right: -8px; width: 30px; height: 30px; transform: rotate(14deg); }
+.champ { margin-top: 20px; padding: 16px 20px; background: var(--sun); border: 3px solid var(--ink); border-radius: 20px; box-shadow: 0 5px 0 var(--ink); font-weight: 600; }
+.vnote { margin-top: 26px; padding: 12px 16px; background: #fff; border: 3px solid var(--ink); border-radius: 16px; font-size: .95rem; }
+.vnote[hidden] { display: none; }
+
+/* ---------- letter page ---------- */
+.crumb { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0 0; font-weight: 600; }
+.crumb a { text-decoration: none; padding: 6px 12px; background: #fff; border: 3px solid var(--ink); border-radius: 12px; }
+.stage { display: grid; gap: 30px; padding-top: 14px; }
+@media (min-width: 860px) { .stage { grid-template-columns: 340px 1fr; gap: 40px; align-items: start; } .stage-pal { position: sticky; top: 16px; } }
+.stage-pal { display: grid; justify-items: center; gap: 16px; text-align: center; padding-top: 92px; }
+.stage-pal .pal { width: min(250px, 62vw); }
+.stage-pal .body { font-size: min(180px, 44vw); }
+.lname { font-size: clamp(2.2rem, 7vw, 3rem); line-height: 1; font-weight: 700; margin-top: 12px; }
+.lar { font-size: 1.8rem; line-height: 1.3; opacity: .85; }
+.lsay { font-size: 1.1rem; }
+.lsay em { font-style: normal; font-weight: 700; background: var(--sun); padding: 0 6px; border-radius: 6px; }
+.cards { display: grid; gap: 22px; }
+.card { background: #fff; border: 3px solid var(--ink); border-radius: 24px; box-shadow: 0 6px 0 var(--ink); padding: 18px 18px 20px; display: grid; gap: 14px; justify-items: start; }
+.card h2 { font-size: 1.3rem; line-height: 1.15; }
+.wordrow { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.emo { font-size: 4.2rem; line-height: 1; padding: 12px 16px; background: hsl(var(--h) 100% 93%); border: 3px solid var(--ink); border-radius: 22px; cursor: pointer; font-family: system-ui, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; }
+.emo.bounce { animation: hop .6s; }
+@keyframes hop { 0%, 100% { transform: translateY(0) rotate(0); } 30% { transform: translateY(-20px) rotate(-8deg); } 60% { transform: translateY(0) rotate(6deg) scale(1.08, .92); } }
+.ar-word { font-family: var(--font-word); font-weight: 800; font-size: 3rem; line-height: 1.6; }
+.ar-word .hit { color: hsl(var(--h) 85% 50%); background: hsl(var(--h) 100% 93%); border-radius: 8px; }
+.tr { font-weight: 700; letter-spacing: .06em; }
+.en { font-size: 1.1rem; }
+.story { font-size: 1.12rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.chip { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; background: hsl(var(--h) 100% 93%); border: 2px solid var(--ink); border-radius: 999px; font-weight: 600; font-size: .95rem; }
+.chip i { width: 11px; height: 11px; background: var(--ink); border-radius: 50%; display: inline-block; }
+.fam, .note { font-size: 1rem; padding: 10px 14px; background: hsl(var(--h) 100% 95%); border-left: 6px solid hsl(var(--h) 85% 58%); border-radius: 8px; }
+.trace { position: relative; width: 100%; height: clamp(230px, 46vw, 300px); background: hsl(var(--h) 100% 97%); border: 3px dashed var(--ink); border-radius: 18px; overflow: hidden; touch-action: none; }
+.ghost { position: absolute; inset: 0; display: grid; place-items: center; font-size: clamp(150px, 34vw, 220px); line-height: 1.5; color: hsl(var(--h) 80% 90%); -webkit-text-stroke: 3px hsl(var(--h) 60% 70%); user-select: none; pointer-events: none; }
+.trace canvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: crosshair; touch-action: none; }
+.opts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; }
+.opts.four { grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 560px) { .opts.four { grid-template-columns: repeat(4, 1fr); } }
+.opt { font-family: var(--font-ar); font-size: clamp(3.4rem, 14vw, 5rem); line-height: 1.5; color: var(--ink); background: #fff; border: 3px solid var(--ink); border-radius: 20px; box-shadow: 0 5px 0 var(--ink); cursor: pointer; padding: 0; min-height: 110px; transition: transform .1s; direction: rtl; }
+.opt:hover:not(:disabled) { transform: translateY(-3px); background: hsl(var(--h) 100% 95%); }
+.opt.right { background: #b7f5dc; animation: hop .6s; }
+.opt.wrong { background: #ffd0d6; animation: wobble .5s; opacity: .6; }
+.opt:disabled { cursor: default; }
+@keyframes wobble { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-9deg); } 40% { transform: rotate(8deg); } 60% { transform: rotate(-6deg); } 80% { transform: rotate(4deg); } }
+.fb { min-height: 1.5em; font-weight: 600; }
+.fb.good { color: #0c7a63; }
+.fb.bad { color: #b3203a; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.pager { display: grid; gap: 18px; margin-top: 34px; justify-items: center; }
+.pager-btns { display: flex; justify-content: space-between; gap: 12px; width: 100%; flex-wrap: wrap; }
+.pips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; max-width: 342px; }
+.pip { width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 2px solid var(--ink); display: block; }
+.pip.done { background: var(--sun); }
+.pip.here { box-shadow: 0 0 0 3px #fff, 0 0 0 6px var(--ink); }
+.foot { margin-top: 36px; text-align: center; font-size: .95rem; opacity: .75; }
+.foot span { font-family: var(--font-word); font-weight: 700; direction: rtl; unicode-bidi: isolate; }
+
+/* ---------- mix-up game ---------- */
+.gtop { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; margin-top: 12px; }
+.gtop .pill { padding: 4px 12px; white-space: nowrap; }
+.meter { min-width: 60px; height: 18px; background: #fff; border: 3px solid var(--ink); border-radius: 999px; overflow: hidden; }
+.meter i { display: block; height: 100%; width: 0; background: var(--mint); transition: width .3s; }
+.gcard { margin-top: 20px; align-items: center; justify-items: center; text-align: center; }
+.gq { font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
+.gq .big-name { display: inline-block; margin: 0 4px; padding: 0 12px; background: var(--sun); border: 3px solid var(--ink); border-radius: 14px; }
+.gpic { font-size: 5rem; line-height: 1; font-family: system-ui, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; }
+.result { display: grid; gap: 14px; justify-items: center; text-align: center; margin-top: 24px; }
+.result h1 { font-size: clamp(2rem, 7vw, 3rem); }
+
+#fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+.toast { position: fixed; left: 50%; bottom: 22px; transform: translate(-50%, 140%); opacity: 0; pointer-events: none; max-width: min(92vw, 520px); padding: 12px 20px; background: var(--sun); border: 3px solid var(--ink); border-radius: 18px; box-shadow: 0 5px 0 var(--ink); font-weight: 700; text-align: center; transition: transform .3s, opacity .3s; z-index: 60; }
+.toast.show { transform: translate(-50%, 0); opacity: 1; }
+
+@media (max-width: 480px) { .brand { font-size: 1.02rem; line-height: 1.15; } .bar { gap: 8px; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<header class="bar">
+  <a class="btn icon" href="#home" aria-label="All letters">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/></svg>
+  </a>
+  <a class="brand" href="#home">Arabic Letter Pals</a>
+  <span class="pill" id="starPill" title="Stars collected">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z" fill="#ffd23f" stroke="#1f1a3d" stroke-width="2" stroke-linejoin="round"/></svg>
+    <span><span id="starNum">0</span>/28</span>
+  </span>
+  <button class="btn icon" id="soundBtn" type="button" aria-pressed="true" aria-label="Sound is on. Tap to turn it off."></button>
+</header>
+<main id="view"></main>
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* 28 letters: name, sound tip, picture word, story, dots */
+const LETTERS = [{"id":"alif","ch":"ا","name":"Alif","ar":"ألف","say":"Aa, as in *father*","word":"أَسَد","tr":"A-sad","en":"lion","pic":"🦁","dots":[0,"none"],"story":"Alif is a tall, skinny lamppost. It stands up straight and shouts \"Aaah!\" because it is so proud to be tall.","note":"Alif sometimes wears a tiny hat (أ). Grown-ups call it a hamza, a quick stop in the throat, like the middle of \"uh-oh\"."},{"id":"baa","ch":"ب","name":"Baa","ar":"باء","say":"B, as in *boat*","word":"بَطَّة","tr":"BAT-ta","en":"duck","pic":"🦆","dots":[1,"below"],"story":"Baa is a little boat, and its dot is a tiny fish swimming UNDER the boat. Blub, blub, Baa!","grp":"bowl"},{"id":"taa","ch":"ت","name":"Taa","ar":"تاء","say":"T, as in *tiger*","word":"تُفَّاحَة","tr":"tuf-FAA-ha","en":"apple","pic":"🍎","dots":[2,"above"],"story":"Taa is a bowl with TWO meatballs on top. Tasty! Tap, tap, t-t-Taa!","grp":"bowl"},{"id":"thaa","ch":"ث","name":"Thaa","ar":"ثاء","say":"Th, as in *think*","word":"ثَعْلَب","tr":"THA-lab","en":"fox","pic":"🦊","dots":[3,"above"],"story":"Thaa is a bowl with THREE meatballs on top. Poke your tongue out and say \"th\" like you are thinking hard!","grp":"bowl"},{"id":"jeem","ch":"ج","name":"Jeem","ar":"جيم","say":"J, as in *jam*","word":"جَمَل","tr":"JA-mal","en":"camel","pic":"🐪","dots":[1,"inside"],"story":"Jeem is a swing with a jelly bean sitting inside it. Jiggle, jiggle, jump! J-j-Jeem!","grp":"hook"},{"id":"hhaa","ch":"ح","name":"Hhaa","ar":"حاء","say":"A breathy H, like *fogging a mirror*","word":"حِصَان","tr":"hi-SAAN","en":"horse","pic":"🐴","dots":[0,"none"],"story":"Hhaa is a hook with NO dots. Breathe on a mirror to fog it up from deep in your throat: Hhhhaa!","grp":"hook"},{"id":"khaa","ch":"خ","name":"Khaa","ar":"خاء","say":"Kh, like *clearing your throat*","word":"خَرُوف","tr":"kha-ROOF","en":"sheep","pic":"🐑","dots":[1,"above"],"story":"Khaa is Hhaa wearing a tiny hat (one dot on top). Clear your throat like a sleepy lion: Khhhh!","grp":"hook"},{"id":"daal","ch":"د","name":"Daal","ar":"دال","say":"D, as in *dog*","word":"دُبّ","tr":"DUBB","en":"bear","pic":"🐻","dots":[0,"none"],"story":"Daal is a little door. Knock, knock! \"d-d-Daal!\" Who is inside? A bear!","grp":"door"},{"id":"dhaal","ch":"ذ","name":"Dhaal","ar":"ذال","say":"Th, as in *this*","word":"ذُرَة","tr":"DHU-ra","en":"corn","pic":"🌽","dots":[1,"above"],"story":"Dhaal is the little door with a fly sitting on top. Say \"this, that, the\" with your tongue between your teeth!","grp":"door"},{"id":"raa","ch":"ر","name":"Raa","ar":"راء","say":"A rolling R, like a *purring cat*","word":"رَغِيف","tr":"ra-GHEEF","en":"bread","pic":"🍞","dots":[0,"none"],"story":"Raa is a slide for tiny cars. Roll your tongue like a purring cat: rrrr! Roll, roll, Raa!","grp":"slide"},{"id":"zaay","ch":"ز","name":"Zaay","ar":"زاي","say":"Z, as in *zebra*","word":"زَرَافَة","tr":"za-RAA-fa","en":"giraffe","pic":"🦒","dots":[1,"above"],"story":"Zaay is Raa with a buzzing bee on top. Zzzzz! Even the giraffe runs away from it!","grp":"slide"},{"id":"seen","ch":"س","name":"Seen","ar":"سين","say":"S, as in *sun*","word":"سَمَكَة","tr":"sa-MA-ka","en":"fish","pic":"🐟","dots":[0,"none"],"story":"Seen has three little teeth, like a smiling shark. Hiss like a snake: sssseen!","grp":"teeth"},{"id":"sheen","ch":"ش","name":"Sheen","ar":"شين","say":"Sh, as in *ship*","word":"شَمْس","tr":"SHAMS","en":"sun","pic":"☀️","dots":[3,"above"],"story":"Sheen is Seen with three dots, like three rays of sunshine. Shhh! Whisper it: sheeen.","grp":"teeth"},{"id":"saad","ch":"ص","name":"Saad","ar":"صاد","say":"A big, heavy S, like *a fat fish*","word":"صَارُوخ","tr":"saa-ROOKH","en":"rocket","pic":"🚀","dots":[0,"none"],"story":"Saad is a fat, round tummy. Make your mouth big and round and say a BIG fat S: SSaad!","grp":"belly"},{"id":"daad","ch":"ض","name":"Daad","ar":"ضاد","say":"A big, heavy D, like *a drum*","word":"ضِفْدَع","tr":"DIF-da'","en":"frog","pic":"🐸","dots":[1,"above"],"story":"Daad is Saad with a dot: a fat frog with a bump on its head! Say a big, heavy D: Ddaad!","grp":"belly"},{"id":"heavy-taa","ch":"ط","name":"Heavy Taa","ar":"طاء","say":"A big, heavy T, like *a drum*","word":"طَائِرَة","tr":"TAA-i-ra","en":"airplane","pic":"✈️","dots":[0,"none"],"story":"Heavy Taa is a tall tower with a flat roof. Make your mouth big and say a heavy T, like a drum: TAA!","grp":"tower"},{"id":"dhaa","ch":"ظ","name":"Dhaa","ar":"ظاء","say":"A big, heavy Th, as in *this*","word":"ظَرْف","tr":"DHARF","en":"envelope","pic":"✉️","dots":[1,"above"],"story":"Dhaa is the tall tower with a flag on top! Say a big, heavy \"th\" like in THIS.","grp":"tower"},{"id":"ayn","ch":"ع","name":"Ayn","ar":"عين","say":"A deep, throaty aah, like *at the doctor*","word":"عِنَب","tr":"IN-ab","en":"grapes","pic":"🍇","dots":[0,"none"],"story":"Ayn means EYE, and it looks like one, peeking at you! Say \"aaah\" from deep in your throat.","grp":"eye"},{"id":"ghayn","ch":"غ","name":"Ghayn","ar":"غين","say":"Gh, like *gargling water*","word":"غَيْمَة","tr":"GHAY-ma","en":"cloud","pic":"☁️","dots":[1,"above"],"story":"Ghayn is the eye with a bubble on top. Gargle like you are brushing your teeth: ghhhh!","grp":"eye"},{"id":"faa","ch":"ف","name":"Faa","ar":"فاء","say":"F, as in *fan*","word":"فِيل","tr":"FEEL","en":"elephant","pic":"🐘","dots":[1,"above"],"story":"Faa is a little face with ONE dot on its forehead. Blow softly like a fan: ffff!","grp":"loop"},{"id":"qaaf","ch":"ق","name":"Qaaf","ar":"قاف","say":"A deep K from *the back of your throat*","word":"قَمَر","tr":"QA-mar","en":"moon","pic":"🌙","dots":[2,"above"],"story":"Qaaf is a loop with TWO dots on top, like two stars next to the moon. Say a deep \"k\" from way back in your throat.","grp":"loop"},{"id":"kaaf","ch":"ك","name":"Kaaf","ar":"كاف","say":"K, as in *kite*","word":"كَلْب","tr":"KALB","en":"dog","pic":"🐶","dots":[0,"none"],"story":"Kaaf is a tall letter with a little zigzag scarf tucked inside. Kick, kick, Kaaf! Woof, says the dog!"},{"id":"laam","ch":"ل","name":"Laam","ar":"لام","say":"L, as in *lemon*","word":"لَيْمُون","tr":"lay-MOON","en":"lemon","pic":"🍋","dots":[0,"none"],"story":"Laam is a long, tall hook, like a lollipop stick. Lick, lick, laaam!"},{"id":"meem","ch":"م","name":"Meem","ar":"ميم","say":"M, as in *moon*","word":"مَوْز","tr":"MAWZ","en":"banana","pic":"🍌","dots":[0,"none"],"story":"Meem is a round little head with a tail. Hum \"mmm\" like when something is yummy!"},{"id":"noon","ch":"ن","name":"Noon","ar":"نون","say":"N, as in *nose*","word":"نَمْلَة","tr":"NAM-la","en":"ant","pic":"🐜","dots":[1,"above"],"story":"Noon is a deep bowl catching ONE raindrop. Hum through your nose: nnnoon!","grp":"bowl"},{"id":"haa","ch":"ه","name":"Haa","ar":"هاء","say":"H, as in *hat*","word":"هَدِيَّة","tr":"ha-DEE-ya","en":"gift","pic":"🎁","dots":[0,"none"],"story":"Haa looks like a little knot, like a bow on a present. Puff like you are blowing on hot soup: haaa!"},{"id":"waaw","ch":"و","name":"Waaw","ar":"واو","say":"W, as in *water*","word":"وَرْدَة","tr":"WAR-da","en":"rose","pic":"🌹","dots":[0,"none"],"story":"Waaw is a loop with a tail, like a wiggly worm. \"Wow!\" says the worm: waaaw!"},{"id":"yaa","ch":"ي","name":"Yaa","ar":"ياء","say":"Y, as in *yellow*","word":"يَد","tr":"YAD","en":"hand","pic":"✋","dots":[2,"below"],"story":"Yaa has TWO dots underneath, like two little feet. Yo-yo, yes, Yaa!","grp":"bowl"}];
+</script>
+<script>
+(function () {
+'use strict';
+
+/* ================= data helpers ================= */
+const N = LETTERS.length;
+const BY = {}, BYCH = {};
+LETTERS.forEach((l, i) => { l.i = i; l.hue = Math.round((i * 137.508) % 360); BY[l.id] = l; BYCH[l.ch] = l; });
+
+// look-alikes used as wrong answers in "find the letter"
+const LOOK = {
+  'ا': 'لكد', 'ب': 'تثني', 'ت': 'بثن', 'ث': 'تبن', 'ج': 'حخع', 'ح': 'جخع', 'خ': 'حجغ', 'د': 'ذرز', 'ذ': 'دزر',
+  'ر': 'زدو', 'ز': 'رذو', 'س': 'شصض', 'ش': 'سصض', 'ص': 'ضطس', 'ض': 'صظش', 'ط': 'ظصض', 'ظ': 'طضص', 'ع': 'غحج',
+  'غ': 'عخح', 'ف': 'قوم', 'ق': 'فنو', 'ك': 'لاط', 'ل': 'اكد', 'م': 'وهف', 'ن': 'بتق', 'ه': 'موح', 'و': 'رمف', 'ي': 'نبت'
+};
+const FAM = {
+  bowl: 'Bowl family: Baa, Taa and Thaa are the same flat bowl, so count the dots! Noon has a deeper bowl and Yaa has a curly tail.',
+  hook: 'Hook family: Jeem, Hhaa and Khaa are the same hook. Jeem has a dot inside, Hhaa has none, and Khaa has a dot on top.',
+  door: 'Door pals: Daal and Dhaal are the same little door. Dhaal has a dot on top.',
+  slide: 'Slide pals: Raa and Zaay are the same slide. Zaay has a dot on top.',
+  teeth: 'Teeth pals: Seen and Sheen have the same three teeth. Sheen has three dots on top.',
+  belly: 'Belly pals: Saad and Daad have the same round belly. Daad has a dot on top.',
+  tower: 'Tower pals: Heavy Taa and Dhaa are the same tower. Dhaa has a dot on top.',
+  eye: 'Eye pals: Ayn and Ghayn have the same eye. Ghayn has a dot on top.',
+  loop: 'Loop pals: Faa and Qaaf are both loops with dots on top. Faa has one dot and Qaaf has two.'
+};
+const CHAT = ['Hee hee, that tickles!', 'Boing!', "Hi! I'm {n}!", 'Again, again!', 'Whoa, I am dizzy!', 'Say my name: {n}!', 'Wheee!', "Don't poke my eye!"];
+
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pickOne = a => a[Math.floor(Math.random() * a.length)];
+const $ = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+const em = t => t.replace(/\*(.+?)\*/g, '<em>$1</em>');
+const dotsText = l => { const [n, pos] = l.dots; return n ? n + (n > 1 ? ' dots ' : ' dot ') + pos : 'no dots'; };
+const hlWord = w => { const m = w.match(/^([ء-ي][ً-ْٰ]*)([\s\S]*)$/); return m ? '<span class="hit">' + m[1] + '</span>' + m[2] : w; };
+
+/* ================= state ================= */
+const S = { stars: {}, sound: true, best: 0 };
+const KEY = 'arabic-letter-pals-v1';
+const starCount = () => Object.keys(S.stars).length;
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* storage may be blocked */ } }
+function merge(d) {
+  if (!d || typeof d !== 'object') return;
+  if (d.stars && typeof d.stars === 'object') Object.keys(d.stars).forEach(k => { if (BY[k]) S.stars[k] = true; });
+  if (typeof d.sound === 'boolean') S.sound = d.sound;
+  if (typeof d.best === 'number') S.best = d.best;
+}
+function boot(data) {
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { /* ignore */ }
+  merge(saved); merge(data);
+  try { window.claude && window.claude.hot && window.claude.hot.snapshot && window.claude.hot.snapshot(() => JSON.parse(JSON.stringify(S))); } catch (e) { /* ignore */ }
+  paintSound(); paintBar();
+  window.addEventListener('hashchange', route);
+  route();
+}
+
+/* ================= sound effects ================= */
+let AC = null;
+function ac() {
+  try {
+    if (!AC) { const C = window.AudioContext || window.webkitAudioContext; if (C) AC = new C(); }
+    if (AC && AC.state === 'suspended') AC.resume();
+  } catch (e) { AC = null; }
+  return AC;
+}
+function tone(f, t0, dur, type, vol, to) {
+  if (!S.sound) return;
+  const a = ac(); if (!a) return;
+  try {
+    const t = a.currentTime + t0, o = a.createOscillator(), g = a.createGain();
+    o.type = type; o.frequency.setValueAtTime(f, t);
+    if (to) o.frequency.exponentialRampToValueAtTime(to, t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.05);
+  } catch (e) { /* ignore */ }
+}
+const sfx = {
+  boing() { const f = 200 + Math.random() * 170; tone(f, 0, .3, 'sine', .28, f * 2.3); tone(f * 2.3, .2, .22, 'sine', .16, f * 1.3); },
+  yay() { [523, 659, 784, 1047].forEach((f, i) => tone(f, i * .09, .24, 'triangle', .22)); },
+  star() { tone(1319, 0, .12, 'sine', .16); tone(1760, .1, .3, 'sine', .16); },
+  oops() { tone(300, 0, .26, 'triangle', .22, 150); tone(220, .24, .38, 'triangle', .22, 90); },
+  tap() { tone(520, 0, .08, 'square', .07, 880); }
+};
+
+/* ================= speech ================= */
+const SYN = ('speechSynthesis' in window) ? window.speechSynthesis : null;
+let VOICES = [];
+const hasAr = () => VOICES.some(v => /^ar/i.test(v.lang.replace('_', '-')));
+function loadVoices() { try { VOICES = SYN ? SYN.getVoices() : []; } catch (e) { VOICES = []; } paintVoiceNote(); }
+if (SYN) {
+  loadVoices();
+  try { SYN.addEventListener('voiceschanged', loadVoices); } catch (e) { SYN.onvoiceschanged = loadVoices; }
+}
+function speak(text, lang, rate) {
+  if (!SYN || !S.sound) return;
+  try {
+    SYN.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    const list = VOICES.filter(v => v.lang.replace('_', '-').toLowerCase().startsWith(lang));
+    const v = list.find(x => x.localService) || list[0];
+    if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = lang === 'ar' ? 'ar-SA' : 'en-US'; }
+    u.rate = rate || 0.85; u.pitch = 1.1;
+    SYN.speak(u);
+  } catch (e) { /* speech can be blocked */ }
+}
+const arabicOK = () => VOICES.length === 0 || hasAr();
+const sayName = l => arabicOK() ? speak(l.ar, 'ar', .8) : speak(l.name, 'en', .7);
+const sayWord = l => arabicOK() ? speak(l.word, 'ar', .75) : speak(l.tr.replace(/-/g, ' ').toLowerCase(), 'en', .7);
+const sayEnglish = t => speak(t, 'en', .9);
+function paintVoiceNote() {
+  const n = $('#vnote'); if (!n) return;
+  n.hidden = !(SYN && VOICES.length > 0 && !hasAr());
+}
+const VOICE_NOTE = 'This device has no Arabic voice, so you will hear an English version of each name. Ask a grown-up to say the Arabic names out loud, or try another phone, tablet or browser.';
+
+/* ================= confetti ================= */
+const fx = $('#fx'), fctx = fx.getContext('2d');
+const RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+let parts = [], raf = 0;
+function fitFx() { const d = window.devicePixelRatio || 1; fx.width = innerWidth * d; fx.height = innerHeight * d; fctx.setTransform(d, 0, 0, d, 0, 0); }
+window.addEventListener('resize', fitFx); fitFx();
+function confetti(x, y, hue, count) {
+  if (RM) return;
+  for (let i = 0; i < (count || 80); i++) {
+    const a = Math.random() * Math.PI * 2, s = 4 + Math.random() * 9;
+    parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 6, r: 5 + Math.random() * 6, rot: Math.random() * 6, vr: (Math.random() - .5) * .4, life: 70 + Math.random() * 40, c: 'hsl(' + ((hue + Math.random() * 140 - 20 + 360) % 360) + ' 90% ' + (52 + Math.random() * 14) + '%)' });
+  }
+  if (!raf) raf = requestAnimationFrame(tick);
+}
+function tick() {
+  fctx.clearRect(0, 0, innerWidth, innerHeight);
+  parts = parts.filter(p => p.life > 0 && p.y < innerHeight + 30);
+  parts.forEach(p => {
+    p.vy += .32; p.x += p.vx; p.y += p.vy; p.vx *= .985; p.rot += p.vr; p.life--;
+    fctx.save(); fctx.translate(p.x, p.y); fctx.rotate(p.rot); fctx.fillStyle = p.c; fctx.globalAlpha = Math.min(1, p.life / 25);
+    fctx.fillRect(-p.r, -p.r / 2, p.r * 2, p.r); fctx.restore();
+  });
+  raf = parts.length ? requestAnimationFrame(tick) : 0;
+  if (!parts.length) fctx.clearRect(0, 0, innerWidth, innerHeight);
+}
+function burstAt(el, hue, n) { const r = el.getBoundingClientRect(); confetti(r.left + r.width / 2, r.top + r.height / 2, hue, n); }
+
+/* ================= toast ================= */
+let toastT = 0;
+function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('show'), 3200); }
+
+/* ================= header bits ================= */
+const ICON_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a8 8 0 0 1 0 11"/></svg>';
+const ICON_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>';
+function paintSound() {
+  const b = $('#soundBtn');
+  b.innerHTML = S.sound ? ICON_ON : ICON_OFF;
+  b.setAttribute('aria-pressed', String(S.sound));
+  b.setAttribute('aria-label', S.sound ? 'Sound is on. Tap to turn it off.' : 'Sound is off. Tap to turn it on.');
+}
+function paintBar() { $('#starNum').textContent = starCount(); }
+$('#soundBtn').addEventListener('click', () => {
+  S.sound = !S.sound; if (!S.sound && SYN) { try { SYN.cancel(); } catch (e) { /* ignore */ } }
+  paintSound(); save(); if (S.sound) sfx.tap();
+});
+
+/* ================= pal builder ================= */
+const STAR_SVG = '<svg class="tstar" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z" fill="#ffd23f" stroke="#1f1a3d" stroke-width="2" stroke-linejoin="round"/></svg>';
+const eyes = size => '<span class="eyes ' + size + '"><i class="eye"><b></b></i><i class="eye"><b></b></i></span>';
+function pal(l, size, extra) {
+  return '<div class="pal" style="--h:' + l.hue + '" data-pal="' + l.id + '">' +
+    '<div class="pal-in">' + eyes(size) +
+    '<button type="button" class="body" aria-label="' + l.name + '. Tap to hear it and make it jump."><span class="glyph" lang="ar">' + l.ch + '</span></button></div>' +
+    '<div class="bubble" aria-hidden="true"></div>' + (extra || '') + '</div>';
+}
+function poke(palEl) {
+  const l = BY[palEl.dataset.pal]; if (!l) return;
+  palEl.classList.remove('squish'); void palEl.offsetWidth; palEl.classList.add('squish');
+  sfx.boing(); sayName(l);
+  const b = $('.bubble', palEl); b.textContent = pickOne(CHAT).replace('{n}', l.name); b.classList.add('show');
+  clearTimeout(palEl._bt); palEl._bt = setTimeout(() => b.classList.remove('show'), 2200);
+}
+
+/* eyes follow the pointer */
+let mx = null, my = null, eyeRaf = 0;
+function lookAt() {
+  eyeRaf = 0; if (mx === null) return;
+  $$('.eye').forEach(e => {
+    const r = e.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > innerHeight) return;
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    const dx = mx - cx, dy = my - cy, d = Math.hypot(dx, dy) || 1;
+    const max = r.width * 0.24, k = Math.min(1, d / 60) * max;
+    $('b', e).style.transform = 'translate(' + (dx / d * k).toFixed(1) + 'px,' + (dy / d * k).toFixed(1) + 'px)';
+  });
+}
+window.addEventListener('pointermove', ev => { mx = ev.clientX; my = ev.clientY; if (!eyeRaf) eyeRaf = requestAnimationFrame(lookAt); }, { passive: true });
+
+/* ================= views ================= */
+const view = $('#view');
+const VIEWS = { cleanup: null };
+function setHue(h) { document.documentElement.style.setProperty('--h', h); }
+function mount(html, hue) { if (VIEWS.cleanup) { VIEWS.cleanup(); VIEWS.cleanup = null; } setHue(hue); view.innerHTML = html; window.scrollTo(0, 0); }
+
+function route() {
+  const h = (location.hash || '').replace('#', '') || 'home';
+  try { SYN && SYN.cancel(); } catch (e) { /* ignore */ }
+  if (h === 'game') showGame();
+  else if (BY[h]) showLetter(BY[h]);
+  else showHome();
+  paintBar(); paintVoiceNote();
+}
+const go = id => { if (location.hash === '#' + id) route(); else location.hash = id; };
+
+/* ---------- home ---------- */
+function showHome() {
+  const n = starCount();
+  const next = LETTERS.find(l => !S.stars[l.id]) || LETTERS[0];
+  const heroIds = ['baa', 'ayn', 'qaaf'];
+  const tiles = LETTERS.map(l =>
+    '<a class="tile" href="#' + l.id + '" style="--h:' + l.hue + '" aria-label="' + l.name + (S.stars[l.id] ? ', star collected' : '') + '">' +
+    eyes('sm') + '<span class="glyph" lang="ar">' + l.ch + '</span><span class="tn">' + l.name + '</span>' + (S.stars[l.id] ? STAR_SVG : '') + '</a>').join('');
+  mount(
+    '<section class="hero"><div>' +
+      '<h1>Meet the 28 Arabic letter pals</h1>' +
+      '<p>Tap a pal to hear its name and watch it jump. Giggle at its story, trace it with your finger, then find it in a crowd. Every letter you find wins a star.</p>' +
+      '<div class="hero-actions">' +
+        '<a class="btn big" href="#' + next.id + '">' + (n === 0 ? 'Start with ' + next.name : n >= N ? 'Visit the pals again' : 'Keep going with ' + next.name) + '</a>' +
+        '<a class="btn big mint" href="#game">Mix-up game</a>' +
+      '</div>' +
+      '<p class="dir-note"><svg viewBox="0 0 28 18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M26 9H3M10 2 3 9l7 7"/></svg>Arabic is read from right to left. Start from the right!</p>' +
+    '</div>' +
+    '<div class="hero-pals">' + heroIds.map(id => pal(BY[id], 'md')).join('') + '</div></section>' +
+    (n >= N ? '<div class="champ">All 28 stars! You know every letter pal. Now say them all in a silly voice.</div>' : '') +
+    '<h2 class="section-title">Pick a pal</h2><p class="sub">The letters go in Arabic order, starting at the top right.</p>' +
+    '<div class="grid" role="list">' + tiles + '</div>' +
+    '<p class="vnote" id="vnote" hidden>' + VOICE_NOTE + '</p>' +
+    '<p class="foot">Made by <span lang="ar">المعلم عاصم مصباح</span></p>',
+    262);
+  paintVoiceNote();
+}
+
+/* ---------- letter page ---------- */
+function showLetter(l) {
+  const prev = LETTERS[l.i - 1], next = LETTERS[l.i + 1];
+  const chips = '<span class="chip">' + (l.dots[0] ? Array.from({ length: l.dots[0] }, () => '<i></i>').join('') : '') + dotsText(l) + '</span>';
+  const pips = LETTERS.map(x => '<a class="pip' + (S.stars[x.id] ? ' done' : '') + (x === l ? ' here' : '') + '" href="#' + x.id + '" aria-label="' + x.name + '"></a>').join('');
+  mount(
+    '<div class="crumb"><a href="#home">All letters</a><span>Letter ' + (l.i + 1) + ' of ' + N + '</span></div>' +
+    '<div class="stage"><div class="stage-pal">' +
+      pal(l, 'xl') +
+      '<h1 class="lname">' + l.name + '</h1>' +
+      '<p class="lar" lang="ar">' + l.ar + '</p>' +
+      '<p class="lsay">' + em(l.say) + '</p>' +
+      '<button type="button" class="btn big" id="hearName">Say it with me</button>' +
+      '<p class="vnote" id="vnote" hidden>' + VOICE_NOTE + '</p>' +
+    '</div><div class="cards">' +
+      '<article class="card"><h2>A friend that starts with ' + l.name + '</h2>' +
+        '<div class="wordrow"><button type="button" class="emo" id="emo" aria-label="' + l.en + '. Tap to hear the Arabic word.">' + l.pic + '</button>' +
+        '<div><div class="ar-word" lang="ar">' + hlWord(l.word) + '</div><div class="tr">' + l.tr + '</div><div class="en">' + l.en + '</div></div></div>' +
+        '<p class="sub">Spot the colored letter at the start of the word.</p>' +
+        '<button type="button" class="btn" id="hearWord">Hear the word</button></article>' +
+      '<article class="card"><h2>Why ' + l.name + ' looks like that</h2>' +
+        '<p class="story">' + l.story + '</p>' +
+        '<div class="chips">' + chips + '</div>' +
+        (FAM[l.grp] ? '<p class="fam">' + FAM[l.grp] + '</p>' : '') +
+        (l.note ? '<p class="note">' + l.note + '</p>' : '') +
+        '<button type="button" class="btn" id="readStory">Read it to me</button></article>' +
+      '<article class="card"><h2>Trace ' + l.name + ' with your finger</h2>' +
+        '<div class="trace" id="trace"><div class="ghost" lang="ar">' + l.ch + '</div><canvas id="tc" aria-label="Drawing area"></canvas></div>' +
+        '<button type="button" class="btn" id="wipe">Wipe it clean</button></article>' +
+      '<article class="card" id="quiz"><h2>Find ' + l.name + ' in the crowd</h2><div id="quizBody"></div></article>' +
+    '</div></div>' +
+    '<nav class="pager"><div class="pager-btns">' +
+      (prev ? '<a class="btn" href="#' + prev.id + '">&larr; ' + prev.name + '</a>' : '<a class="btn" href="#home">&larr; All letters</a>') +
+      (next ? '<a class="btn big" href="#' + next.id + '">' + next.name + ' &rarr;</a>' : '<a class="btn big mint" href="#game">Mix-up game &rarr;</a>') +
+    '</div><div class="pips" aria-label="Progress">' + pips + '</div></nav>' +
+    '<p class="foot">Made by <span lang="ar">المعلم عاصم مصباح</span></p>',
+    l.hue);
+
+  $('#hearName').addEventListener('click', () => { sfx.tap(); sayName(l); });
+  $('#hearWord').addEventListener('click', () => { sfx.tap(); sayWord(l); });
+  $('#emo').addEventListener('click', e => { const b = e.currentTarget; b.classList.remove('bounce'); void b.offsetWidth; b.classList.add('bounce'); sfx.boing(); sayWord(l); });
+  $('#readStory').addEventListener('click', () => { sfx.tap(); sayEnglish(l.story); });
+  setupTrace(l);
+  setupQuiz(l, next);
+  paintVoiceNote();
+}
+
+/* ---------- tracing ---------- */
+function setupTrace(l) {
+  const box = $('#trace'), cv = $('#tc'), ctx = cv.getContext('2d');
+  let drawing = false, last = null, step = 0;
+  function fit() {
+    const r = box.getBoundingClientRect(), d = window.devicePixelRatio || 1;
+    cv.width = Math.max(1, r.width * d); cv.height = Math.max(1, r.height * d);
+    ctx.setTransform(d, 0, 0, d, 0, 0); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = 16;
+  }
+  fit();
+  const pos = ev => { const r = cv.getBoundingClientRect(); return { x: ev.clientX - r.left, y: ev.clientY - r.top }; };
+  cv.addEventListener('pointerdown', ev => { drawing = true; last = pos(ev); try { cv.setPointerCapture(ev.pointerId); } catch (e) { /* ignore */ } ctx.fillStyle = 'hsl(' + l.hue + ' 90% 55%)'; ctx.beginPath(); ctx.arc(last.x, last.y, 8, 0, 6.3); ctx.fill(); sfx.tap(); });
+  cv.addEventListener('pointermove', ev => {
+    if (!drawing) return;
+    const p = pos(ev); step++;
+    ctx.strokeStyle = 'hsl(' + ((l.hue + step * 4) % 360) + ' 90% 55%)';
+    ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(p.x, p.y); ctx.stroke(); last = p;
+  });
+  const stop = () => { drawing = false; };
+  cv.addEventListener('pointerup', stop); cv.addEventListener('pointercancel', stop); cv.addEventListener('pointerleave', stop);
+  $('#wipe').addEventListener('click', () => { ctx.clearRect(0, 0, cv.width, cv.height); step = 0; sfx.tap(); });
+  const onResize = () => fit();
+  window.addEventListener('resize', onResize);
+  VIEWS.cleanup = () => window.removeEventListener('resize', onResize);
+}
+
+/* ---------- find the letter (letter page) ---------- */
+function choices(l, count) {
+  const near = shuffle(LOOK[l.ch].split('').map(c => BYCH[c]));
+  const out = near.slice(0, count - 1);
+  if (out.length < count - 1) shuffle(LETTERS.filter(x => x !== l && !out.includes(x))).slice(0, count - 1 - out.length).forEach(x => out.push(x));
+  return shuffle([l].concat(out));
+}
+function setupQuiz(l, next) {
+  const body = $('#quizBody');
+  let solved = false, tries = 0;
+  function draw() {
+    const opts = choices(l, 3);
+    body.innerHTML = '<p class="story">Which one is <b>' + l.name + '</b>? Look at the dots and the shape.</p>' +
+      '<div class="opts" id="opts">' + opts.map(o => '<button type="button" class="opt" lang="ar" data-ch="' + o.ch + '" aria-label="letter option">' + o.ch + '</button>').join('') + '</div>' +
+      '<p class="fb" id="fb" role="status" aria-live="polite"></p>' +
+      '<div class="actions"><button type="button" class="btn" id="qHear">Hear ' + l.name + ' again</button>' +
+      '<button type="button" class="btn" id="qMix" hidden>Try a new crowd</button>' +
+      '<a class="btn big" id="qNext" hidden href="#' + (next ? next.id : 'game') + '">' + (next ? 'Next: ' + next.name + ' &rarr;' : 'Play the mix-up game &rarr;') + '</a></div>';
+    solved = false; tries = 0;
+    $('#qHear').addEventListener('click', () => { sfx.tap(); sayName(l); });
+    $('#qMix').addEventListener('click', draw);
+    $('#opts').addEventListener('click', ev => {
+      const b = ev.target.closest('.opt'); if (!b || b.disabled || solved) return;
+      const fb = $('#fb');
+      if (b.dataset.ch === l.ch) {
+        solved = true; b.classList.add('right');
+        $$('.opt', body).forEach(x => { x.disabled = true; });
+        fb.className = 'fb good'; fb.textContent = tries === 0 ? 'Yes! That is ' + l.name + '! You got it on the first try!' : 'Yes! That is ' + l.name + '! Now you know it.';
+        sfx.yay(); setTimeout(sfx.star, 450); sayName(l);
+        burstAt(b, l.hue, 90);
+        $('#qNext').hidden = false; $('#qMix').hidden = false;
+        earn(l);
+      } else {
+        tries++; const w = BYCH[b.dataset.ch];
+        b.classList.add('wrong'); b.disabled = true;
+        fb.className = 'fb bad';
+        fb.textContent = 'Oops! That one is ' + (w ? w.name : 'a different letter') + '. Hint: ' + l.name + ' has ' + dotsText(l) + '.';
+        sfx.oops();
+      }
+    });
+  }
+  draw();
+}
+function earn(l) {
+  if (S.stars[l.id]) { toast('Star already collected. Nice work!'); return; }
+  S.stars[l.id] = true; save(); paintBar();
+  const pip = $$('.pip')[l.i]; if (pip) pip.classList.add('done');
+  const n = starCount();
+  if (n >= N) {
+    toast('All 28 stars! You are an Arabic letter champion!');
+    [0, 400, 800].forEach(t => setTimeout(() => confetti(innerWidth * Math.random(), innerHeight * .3, Math.random() * 360, 120), t));
+  } else toast('New star! ' + n + ' of ' + N + ' collected.');
+}
+
+/* ---------- mix-up game ---------- */
+function showGame() {
+  const learned = LETTERS.filter(l => S.stars[l.id]);
+  const pool = learned.length >= 4 ? learned : LETTERS;
+  const total = 10;
+  const rounds = [];
+  let bag = [];
+  for (let i = 0; i < total; i++) {
+    if (!bag.length) bag = shuffle(pool);
+    rounds.push({ l: bag.pop(), type: i % 2 === 0 ? 'name' : 'pic' });
+  }
+  let idx = 0, score = 0, answered = false;
+  mount('<div class="crumb"><a href="#home">All letters</a><span>Mix-up game</span></div><div id="g"></div>' +
+    '<p class="foot">Made by <span lang="ar">المعلم عاصم مصباح</span></p>', 262);
+  const g = $('#g');
+
+  function round() {
+    const r = rounds[idx], l = r.l; answered = false;
+    setHue(l.hue);
+    const opts = choices(l, 4);
+    const q = r.type === 'name'
+      ? '<p class="gq">Which pal is <span class="big-name">' + l.name + '</span>?</p><button type="button" class="btn" id="gHear">Hear the name</button>'
+      : '<div class="gpic" aria-hidden="true">' + l.pic + '</div><p class="gq">Which letter starts the Arabic word for <span class="big-name">' + l.en + '</span>?</p><button type="button" class="btn" id="gHear">Hear the Arabic word</button>';
+    g.innerHTML =
+      '<div class="gtop"><span class="pill">Round ' + (idx + 1) + '/' + total + '</span><div class="meter" aria-hidden="true"><i style="width:' + (idx / total * 100) + '%"></i></div><span class="pill">Score ' + score + '</span></div>' +
+      '<div class="card gcard">' + q +
+      '<div class="opts four" id="gopts">' + opts.map(o => '<button type="button" class="opt" lang="ar" data-ch="' + o.ch + '" aria-label="letter option">' + o.ch + '</button>').join('') + '</div>' +
+      '<p class="fb" id="gfb" role="status" aria-live="polite"></p>' +
+      '<button type="button" class="btn big" id="gNext" hidden>' + (idx + 1 === total ? 'See my score' : 'Next one') + '</button></div>' +
+      (idx === 0 ? '<p class="sub" style="margin-top:14px">Playing with ' + (pool === LETTERS ? 'all 28 letters. Collect stars on the letter pages and this game will use your own letters.' : pool.length + ' letters you have already found.') + '</p>' : '');
+    $('#gHear').addEventListener('click', () => { sfx.tap(); r.type === 'name' ? sayName(l) : sayWord(l); });
+    $('#gNext').addEventListener('click', () => { idx++; idx < total ? round() : finish(); });
+    $('#gopts').addEventListener('click', ev => {
+      const b = ev.target.closest('.opt'); if (!b || answered) return; answered = true;
+      const fb = $('#gfb'), ok = b.dataset.ch === l.ch;
+      $$('.opt', g).forEach(x => { x.disabled = true; if (x.dataset.ch === l.ch) x.classList.add('right'); });
+      if (ok) { score++; fb.className = 'fb good'; fb.textContent = 'Yes! That is ' + l.name + '!'; sfx.yay(); burstAt(b, l.hue, 60); }
+      else { b.classList.add('wrong'); fb.className = 'fb bad'; fb.textContent = 'Oops! It was ' + l.name + ' (' + dotsText(l) + '). Now you know!'; sfx.oops(); }
+      sayName(l);
+      $('#gNext').hidden = false; $('#gNext').focus({ preventScroll: true });
+    });
+  }
+
+  function finish() {
+    setHue(262);
+    const newBest = score > S.best; if (newBest) { S.best = score; save(); }
+    const [title, line] = score === total ? ['Letter wizard!', 'Perfect! Even Alif is standing up straight to clap for you.']
+      : score >= 7 ? ['Super star!', 'So close to perfect. The pals are doing a happy dance.']
+      : score >= 4 ? ['Getting there!', 'Your pals are cheering. Visit the letters you missed and try again.']
+      : ['Brave explorer!', 'Every letter pal was new once. Try the letter pages again, then come back.'];
+    g.innerHTML = '<div class="result"><h1>' + title + '</h1>' +
+      '<div class="pill" style="font-size:1.4rem">You found ' + score + ' of ' + total + '</div>' +
+      '<p>' + line + '</p>' + (newBest && score > 0 ? '<p><b>New best score!</b></p>' : S.best ? '<p class="sub">Best score: ' + S.best + ' of ' + total + '</p>' : '') +
+      '<div class="actions" style="justify-content:center"><button type="button" class="btn big" id="again">Play again</button><a class="btn" href="#home">Back to the letters</a></div></div>';
+    $('#again').addEventListener('click', showGame);
+    if (score >= 7) { sfx.yay(); confetti(innerWidth / 2, innerHeight / 3, 40, 140); setTimeout(() => confetti(innerWidth * .25, innerHeight / 3, 200, 90), 300); setTimeout(() => confetti(innerWidth * .75, innerHeight / 3, 320, 90), 500); }
+  }
+  round();
+}
+
+/* ================= global events ================= */
+view.addEventListener('click', ev => {
+  const body = ev.target.closest('.pal .body');
+  if (body) poke(body.closest('.pal'));
+});
+
+if (window.claude && window.claude.hot && window.claude.hot.ready) window.claude.hot.ready(boot);
+else boot((window.claude && window.claude.hot && window.claude.hot.data) || {});
+})();
+</script>
+</body>
+</html>
